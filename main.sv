@@ -5,30 +5,25 @@ module Matrix_Calculator
      input logic enter, sw,
      input logic [1:0] operation,
      input logic clk, rst,
-     output logic [5:0] data_out,
+     output logic [4:0] data_out,
      output logic finish, error,
      output logic [3:0] index);
-     // test
-    //  output logic[95:0] selected_output,
-    //  output logic[95:0] add_output, mul_output,
-    //  output logic[31:0] input_matrix_A, input_matrix_B,
-    //  output logic input_en);
     
     logic input_en;
-    logic[63:0] input_matrix;
+    logic[127:0] input_matrix;
     logic[1:0] input_op;
-    logic[95:0] add_output, mul_output;
-    logic[95:0] selected_output;
-    logic[31:0] input_matrix_A, input_matrix_B;
+    logic[159:0] add_output, mul_output;
+    logic[159:0] selected_output;
+    logic[63:0] input_matrix_A, input_matrix_B;
     
     logic add_en, mul_en;
     logic add_finish, mul_finish;
     logic switch_pulse, enter_pulse;
 
-    assign input_matrix_A = input_matrix[63:32];
-    assign input_matrix_B = input_matrix[31:0];
+    assign input_matrix_A = input_matrix[127:64];
+    assign input_matrix_B = input_matrix[63:0];
     
-    ShiftRegister_8_64 shift_register(.data_in(data_in),
+    ShiftRegister_8_128 shift_register(.data_in(data_in),
                                       .en(enter_pulse && input_en),
                                       .clock(clk),
                                       .rst(rst),
@@ -40,7 +35,7 @@ module Matrix_Calculator
                          .clear(rst),
                          .Q(input_op));
     
-    Mux2to1 #(96) output_mux(.Y(selected_output),
+    Mux2to1 #(160) output_mux(.Y(selected_output),
                              .I1(add_output),
                              .I0(mul_output),
                              .S(input_op[1]));
@@ -83,32 +78,51 @@ module Matrix_Calculator
                         .pulse(enter_pulse));
     
 
+    logic [4:0] index_count;
+
     // output index logic
-    Counter #(4) index_counter(.clock(clk),
+    Counter #(5) index_counter(.clock(clk),
                                .clear(rst),
                                .en(finish && switch_pulse),
-                               .Q(index));
+                               .Q(index_count));
+    assign index = index_count[4:1];
 
     // output switching logic
     always_comb begin
-        case(index)
-            4'd0: data_out = selected_output[95:90];
-            4'd1: data_out = selected_output[89:84];
-            4'd2: data_out = selected_output[83:78];
-            4'd3: data_out = selected_output[77:72];
-            4'd4: data_out = selected_output[71:66];
-            4'd5: data_out = selected_output[65:60];
-            4'd6: data_out = selected_output[59:54];
-            4'd7: data_out = selected_output[53:48];
-            4'd8: data_out = selected_output[47:42];
-            4'd9: data_out = selected_output[41:36];
-            4'd10: data_out = selected_output[35:30];
-            4'd11: data_out = selected_output[29:24];
-            4'd12: data_out = selected_output[23:18];
-            4'd13: data_out = selected_output[17:12];
-            4'd14: data_out = selected_output[11:6];
-            4'd15: data_out = selected_output[5:0];
-            default: data_out = 6'b000000;
+        case(index_count)
+            5'b0000_0: data_out = selected_output[159:155];
+            5'b0000_1: data_out = selected_output[154:150];
+            5'b0001_0: data_out = selected_output[149:145];
+            5'b0001_1: data_out = selected_output[144:140];
+            5'b0010_0: data_out = selected_output[139:135];
+            5'b0010_1: data_out = selected_output[134:130];
+            5'b0011_0: data_out = selected_output[129:125];
+            5'b0011_1: data_out = selected_output[124:120];
+            5'b0100_0: data_out = selected_output[119:115];
+            5'b0100_1: data_out = selected_output[114:110];
+            5'b0101_0: data_out = selected_output[109:105];
+            5'b0101_1: data_out = selected_output[104:100];
+            5'b0110_0: data_out = selected_output[99:95];
+            5'b0110_1: data_out = selected_output[94:90];
+            5'b0111_0: data_out = selected_output[89:85];
+            5'b0111_1: data_out = selected_output[84:80];
+            5'b1000_0: data_out = selected_output[79:75];
+            5'b1000_1: data_out = selected_output[74:70];
+            5'b1001_0: data_out = selected_output[69:65];
+            5'b1001_1: data_out = selected_output[64:60];
+            5'b1010_0: data_out = selected_output[59:55];
+            5'b1010_1: data_out = selected_output[54:50];
+            5'b1011_0: data_out = selected_output[49:45];
+            5'b1011_1: data_out = selected_output[44:40];
+            5'b1100_0: data_out = selected_output[39:35];
+            5'b1100_1: data_out = selected_output[34:30];
+            5'b1101_0: data_out = selected_output[29:25];
+            5'b1101_1: data_out = selected_output[24:20];
+            5'b1110_0: data_out = selected_output[19:15];
+            5'b1110_1: data_out = selected_output[14:10];
+            5'b1111_0: data_out = selected_output[9:5];
+            5'b1111_1: data_out = selected_output[4:0];
+            default: data_out = 5'b0;
         endcase
     end
 
@@ -124,7 +138,9 @@ module matrix_calc_fsm (input logic clk, rst,
                         output logic mul_en, add_en);
     
     
-    enum logic [4:0] {S,S1,S2,S3,S4,S5,S6,S7,S8,M,A,E,F} cur_state, n_state;
+    enum logic [4:0] {S,S1,S2,S3,S4,S5,S6,S7,S8,
+                      S9,S10,S11,S12,S13,S14,S15,S16,
+                      M,A,E,F} cur_state, n_state;
     always_comb begin
         case(cur_state)
             S: begin
@@ -232,6 +248,110 @@ module matrix_calc_fsm (input logic clk, rst,
                 end
             end
             S8: begin
+                input_en = 1'b1;
+                error = 1'b0;
+                mul_en = 1'b0;
+                add_en = 1'b0;
+                finish = 1'b0;
+                if(enter) begin
+                    n_state = S9;
+                end
+                else begin
+                    n_state = S8;
+                end
+            end
+            S9: begin
+                input_en = 1'b1;
+                error = 1'b0;
+                mul_en = 1'b0;
+                add_en = 1'b0;
+                finish = 1'b0;
+                if(enter) begin
+                    n_state = S10;
+                end
+                else begin
+                    n_state = S9;
+                end
+            end
+            S10: begin
+                input_en = 1'b1;
+                error = 1'b0;
+                mul_en = 1'b0;
+                add_en = 1'b0;
+                finish = 1'b0;
+                if(enter) begin
+                    n_state = S11;
+                end
+                else begin
+                    n_state = S10;
+                end
+            end
+            S11: begin
+                input_en = 1'b1;
+                error = 1'b0;
+                mul_en = 1'b0;
+                add_en = 1'b0;
+                finish = 1'b0;
+                if(enter) begin
+                    n_state = S12;
+                end
+                else begin
+                    n_state = S11;
+                end
+            end
+            S12: begin
+                input_en = 1'b1;
+                error = 1'b0;
+                mul_en = 1'b0;
+                add_en = 1'b0;
+                finish = 1'b0;
+                if(enter) begin
+                    n_state = S13;
+                end
+                else begin
+                    n_state = S12;
+                end
+            end
+            S13: begin
+                input_en = 1'b1;
+                error = 1'b0;
+                mul_en = 1'b0;
+                add_en = 1'b0;
+                finish = 1'b0;
+                if(enter) begin
+                    n_state = S14;
+                end
+                else begin
+                    n_state = S13;
+                end
+            end
+            S14: begin
+                input_en = 1'b1;
+                error = 1'b0;
+                mul_en = 1'b0;
+                add_en = 1'b0;
+                finish = 1'b0;
+                if(enter) begin
+                    n_state = S15;
+                end
+                else begin
+                    n_state = S14;
+                end
+            end
+            S15: begin
+                input_en = 1'b1;
+                error = 1'b0;
+                mul_en = 1'b0;
+                add_en = 1'b0;
+                finish = 1'b0;
+                if(enter) begin
+                    n_state = S16;
+                end
+                else begin
+                    n_state = S15;
+                end
+            end
+            S16: begin
                 input_en = 1'b0;
                 mul_en = 1'b0;
                 add_en = 1'b0;

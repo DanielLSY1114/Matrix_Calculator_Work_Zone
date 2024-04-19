@@ -91,24 +91,24 @@ module Synchronizer
     sync <= tmp2;
 endmodule : Synchronizer
 
-// 8 bit in 64 bit out shift register
-module ShiftRegister_8_64 
+// 8 bit in 128 bit out shift register
+module ShiftRegister_8_128 
   (input logic [7:0] data_in,
    input logic en,
    input logic clock, rst,
-   output logic [63:0] Q);
+   output logic [127:0] Q);
   always_ff @(posedge clock) begin
     if (rst) begin
-      Q <= 64'b0;
+      Q <= 128'b0;
     end
     else if (en) begin
-      Q <= {Q[55:0],data_in};
+      Q <= {Q[119:0],data_in};
     end
     else begin
       Q <= Q;
     end
   end
-endmodule : ShiftRegister_8_64
+endmodule : ShiftRegister_8_128
 
 // 6 bit in 96 bit out shift register
 module ShiftRegister_6_96
@@ -182,6 +182,24 @@ module ShiftRegister_12_96
   end
 endmodule : ShiftRegister_12_96
 
+module ShiftRegister_20_160
+  (input logic [19:0] data_in,
+   input logic en,
+   input logic clock, rst,
+   output logic [159:0] Q);
+  always_ff @(posedge clock) begin
+    if (rst) begin
+      Q <= 160'b0;
+    end
+    else if (en) begin
+      Q <= {Q[149:0],data_in};
+    end
+    else begin
+      Q <= Q;
+    end
+  end
+endmodule : ShiftRegister_20_160
+
 module ShiftRegister_96_96
   (input logic [95:0] data_in,
    input logic en,
@@ -199,3 +217,39 @@ module ShiftRegister_96_96
     end
   end
 endmodule : ShiftRegister_96_96
+
+module ShiftRegister_160_160
+  (input logic [159:0] data_in,
+   input logic en,
+   input logic clock, rst,
+   output logic [159:0] Q);
+  always_ff @(posedge clock) begin
+    if (rst) begin
+      Q <= 160'b0;
+    end
+    else if (en) begin
+      Q <= data_in;
+    end
+    else begin
+      Q <= Q;
+    end
+  end
+endmodule : ShiftRegister_160_160
+
+module ShiftRegister_80_160
+  (input logic [79:0] data_in,
+   input logic en,
+   input logic clock, rst,
+   output logic [159:0] Q);
+  always_ff @(posedge clock) begin
+    if (rst) begin
+      Q <= 160'b0;
+    end
+    else if (en) begin
+      Q <= {Q[79:0],data_in};
+    end
+    else begin
+      Q <= Q;
+    end
+  end
+endmodule : ShiftRegister_80_160

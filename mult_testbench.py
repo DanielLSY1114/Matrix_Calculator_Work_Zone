@@ -28,8 +28,8 @@ async def basic_test(dut):
 
     await FallingEdge(dut.clk)
 
-    dut.mat_A.value = 4294967295
-    dut.mat_B.value = 4294967293
+    dut.mat_A.value = 18446744073709551615
+    dut.mat_B.value = 18446744073709551615
 
     dut.mult_en.value = True
     assert dut.finish.value == 0
@@ -74,10 +74,11 @@ async def basic_test(dut):
     assert dut.finish.value == 1
 
     print ("output: ", dut.mat_out.value)
-    A = int(dut.mat_out.value)
-    binary_str = format(A, '096b')
 
-    chunks = [binary_str[i:i+6] for i in range(0, len(binary_str), 6)]
+    A = int(dut.mat_out.value)
+    binary_str = bin(A)[2:].zfill(160)
+
+    chunks = [binary_str[i:i+10] for i in range(0, len(binary_str), 10)]
 
     elements = [int(chunk, 2) for chunk in chunks]
 
