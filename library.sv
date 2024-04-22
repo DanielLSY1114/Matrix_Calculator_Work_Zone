@@ -271,21 +271,3 @@ module ShiftRegister_40_160
     end
   end
 endmodule : ShiftRegister_40_160
-
-module ShiftRegister_20_160
-  (input logic [19:0] data_in,
-   input logic en,
-   input logic clock, rst,
-   output logic [159:0] Q);
-  always_ff @(posedge clock) begin
-    if (rst) begin
-      Q <= 160'b0;
-    end
-    else if (en) begin
-      Q <= {Q[139:0],data_in};
-    end
-    else begin
-      Q <= Q;
-    end
-  end
-endmodule : ShiftRegister_20_160
