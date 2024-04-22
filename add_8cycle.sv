@@ -87,6 +87,7 @@ module add_fsm (input logic [63:0] mat_A, mat_B,
                 add1_in2 = 4'b0;
                 add2_in1 = 4'b0;
                 add2_in2 = 4'b0;
+                shift_en = 1'b0;
                 finish = 1'b0;
                 if(add_en) begin
                     n_state = A1;
