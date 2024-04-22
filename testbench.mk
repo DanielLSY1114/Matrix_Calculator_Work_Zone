@@ -1,5 +1,5 @@
 TOPLEVEL_LANG = verilog
-VERILOG_SOURCES = $(shell pwd)/library.sv $(shell pwd)/add_2cycle.sv $(shell pwd)/mult.sv $(shell pwd)/main.sv
+VERILOG_SOURCES = $(shell pwd)/library.sv $(shell pwd)/add_4cycle.sv $(shell pwd)/mult.sv $(shell pwd)/main.sv
 TOPLEVEL = Matrix_Calculator
 MODULE = cal_testbench
 
