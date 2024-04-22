@@ -173,6 +173,18 @@ async def add_test(dut):
 
     await FallingEdge(dut.clk)
     await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
 
     assert dut.finish.value == 1
     assert dut.error.value == 0
@@ -211,6 +223,12 @@ async def sub_test(dut):
     matrix_ab = await random_matrix()
     await matrix_in(dut, matrix_ab)
 
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
+    await FallingEdge(dut.clk)
     await FallingEdge(dut.clk)
     await FallingEdge(dut.clk)
     await FallingEdge(dut.clk)
